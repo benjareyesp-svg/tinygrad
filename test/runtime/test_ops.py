@@ -1963,6 +1963,7 @@ class TestOps(TensorTestCase):
     x = Tensor.ones(3,3)
     with self.assertRaises(ValueError): x.pad((None,(0,1),(3,0)))
     with self.assertRaises(ValueError): x.pad(((0,1),))
+    with self.assertRaises(ValueError): Tensor.ones(3,3,3).pad(((0,1),(0,1)))  # 2 groups for a 3D tensor, too few
 
   def test_pad_reflect_mode(self):
     helper_test_op([(1,1,5,5)], lambda x: torch.nn.functional.pad(x, (0,2,3,2), mode="reflect"), lambda x: x.pad((0,2,3,2), mode="reflect"))
