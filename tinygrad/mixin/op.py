@@ -387,8 +387,10 @@ class OpMixin(ElementwiseMixin, ReduceMixin):
     x, dx, dw = self, self.ndim, w.ndim
     if not (dx > 0 and dw > 0): raise RuntimeError(f"both tensors need to be at least 1D, got {dx}D and {dw}D")
     if x.shape[-1] != w.shape[axis_w:=-min(w.ndim,2)]: raise RuntimeError(f"cannot dot {x.shape} and {w.shape}")
-    x = x.reshape(*x.shape[0:-1], *[1]*min(dx-1, dw-1, 1), x.shape[-1])
-    w = w.reshape(*w.shape[0:-2], *[1]*min(dx-1, dw-1, 1), *w.shape[axis_w:]).transpose(-1, axis_w)
+    # both reshapes were inserting the same singleton dims computed from dx/dw separately, share one calc
+    ones = [1]*min(dx-1, dw-1, 1)
+    x = x.reshape(*x.shape[0:-1], *ones, x.shape[-1])
+    w = w.reshape(*w.shape[0:-2], *ones, *w.shape[axis_w:]).transpose(-1, axis_w)
     return (x*w).sum(-1, dtype=dtype).cast(least_upper_dtype(x.dtype, w.dtype) if dtype is None else dtype)
 
   def matmul(self, x:Self, reverse=False, dtype:DTypeLike|None=None) -> Self:
