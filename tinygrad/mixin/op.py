@@ -356,7 +356,7 @@ class OpMixin(ElementwiseMixin, ReduceMixin):
       if len(padding)%2 != 0: raise ValueError("Flat padding must have even number of pads")
       pX = ((0,0),)*(self.ndim - len(padding)//2) + flat_to_grouped(padding)  # type: ignore[arg-type]
     else: pX = tuple((0,0) if p is None else p for p in padding)  # type: ignore[misc]
-    if len(pX) > self.ndim: raise ValueError(f"padding length is improper, {padding=} {self.ndim=}")
+    if len(pX) != self.ndim: raise ValueError(f"padding length is improper, {padding=} {self.ndim=}")
     # dispatch
     if mode == "constant": return self._pad_constant(pX, value)
     assert all_int(self.shape), f"does not support symbolic shape {self.shape}"
