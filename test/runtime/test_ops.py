@@ -1963,6 +1963,12 @@ class TestOps(TensorTestCase):
     x = Tensor.ones(3,3)
     with self.assertRaises(ValueError): x.pad((None,(0,1),(3,0)))
     with self.assertRaises(ValueError): x.pad(((0,1),))
+    # Regression test: a 3D tensor given only 2 padding groups should raise, since each
+    # dimension of the tensor needs its own padding group (or None). Before this fix,
+    # the length check only caught having too MANY groups, not too few.
+    with self.assertRaises(ValueError):
+        three_d_tensor = Tensor.ones(3, 3, 3)
+        three_d_tensor.pad(((0, 1), (0, 1)))
 
   def test_pad_reflect_mode(self):
     helper_test_op([(1,1,5,5)], lambda x: torch.nn.functional.pad(x, (0,2,3,2), mode="reflect"), lambda x: x.pad((0,2,3,2), mode="reflect"))
