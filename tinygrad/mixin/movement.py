@@ -184,6 +184,7 @@ class MovementMixin:
     return self if ret.shape == self.shape else ret
 
   def pad(self, arg:tuple[tuple[sint, sint] | None, ...]) -> Self:
+    # low-level pad, see Tensor.pad for the public, mode-aware version
     if self.ndim != len(arg):
       raise ValueError(f"{self.ndim=} != {len(arg)=}")
     ret = self._mop(Ops.PAD, tuple((x[0], s+x[0]+x[1]) if x is not None else (0, s) for x, s in zip(arg, self.shape)))
