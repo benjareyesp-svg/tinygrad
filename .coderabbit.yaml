@@ -1,0 +1,33 @@
+reviews:
+  profile: assertive
+  slop_detection:
+    enabled: true
+  pre_merge_checks:
+    custom_checks:
+      - name: no-code-golf
+        mode: warning
+        instructions: |
+          Flag any change that makes code harder to read in order to reduce line count or compress
+          logic into fewer lines (chained ternaries, nested lambdas, removing named intermediate
+          variables that explained intent, collapsing multiple logical steps into one dense expression).
+          Do NOT flag a change just because it has fewer lines if it achieves that by removing genuine
+          duplication (e.g. two near-identical blocks replaced by one shared helper or variable) while
+          keeping named variables and existing error handling intact. The question is whether the change
+          improves or hides readability, not whether it is shorter.
+      - name: unbenchmarked-speedup
+        mode: warning
+        instructions: |
+          Flag any PR description or comment that claims a change is faster, a "speedup", or improves
+          performance/latency, unless the PR includes concrete benchmark numbers (before/after timing,
+          a benchmark script, or a reference to this repo's benchmark CI) supporting the claim.
+      - name: pr-scope
+        mode: warning
+        instructions: |
+          Flag a PR that bundles clearly unrelated concerns together (e.g. a refactor in one module,
+          plus an unrelated docs/whitespace change, plus a new unrelated file or feature stub), even if
+          the total line count is small. The concern is mixing unrelated changes in one PR, not just size.
+  auto_review:
+    base_branches:
+      - "master"
+      - "base-pinned"
+      - "case4-buggy-base"
